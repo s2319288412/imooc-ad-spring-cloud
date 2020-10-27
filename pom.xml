@@ -13,7 +13,6 @@
     <modules>
         <module>ad-eureka</module>
     </modules>
-
     <!--    项目描述：可不要-->
     <name>imooc-ad-spring-cloud</name>
     <description>Project For Imooc Ad Spring Cloud</description>
