@@ -1,4 +1,5 @@
-##指定eurka的名字
+#单节点配置
+#指定eurka的名字
 #spring:
 #  application:
 #    name: ad-eureka
