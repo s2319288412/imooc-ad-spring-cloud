@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+<!--    项目的坐标-->
+    <groupId>com.imooc.ad</groupId>
+    <artifactId>imooc-ad</artifactId>
+<!--    必须在父模块下指定打包的方式，不然默认的是jar的方式进行打包-->
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>ad-eureka</module>
+    </modules>
+
+    <!--    项目描述：可不要-->
+    <name>imooc-ad-spring-cloud</name>
+    <description>Project For Imooc Ad Spring Cloud</description>
+
+<!--    设定主工程是基于springboot实现-->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.0.2.RELEASE</version>
+    </parent>
+
+<!--    自己指定一些自定义元素-->
+    <properties>
+<!--        自定义的，名字是随便起的，spring-cloud
+                也可以指定jdk的版本
+
+-->
+        <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
+    </properties>
+
+<!--    把通用的依赖放在父模块下-->
+    <dependencies>
+<!--        lombok的依赖-->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.16.18</version>
+        </dependency>
+<!--        编写测试用例的依赖-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+<!--    向上逐层 定义一个-->
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
+<!--    定义远程仓库-->
+    <repositories>
+        <repository>
+            <id>spring-milestones</id>
+            <name>Spring Milestones</name>
+            <url>https://repo.spring.io/milestones</url>
+<!--            不允许的-->
+            <snapshots>
+<!--                去除开发版-->
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+</project>
