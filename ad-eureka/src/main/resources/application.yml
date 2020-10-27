@@ -1,71 +1,71 @@
-#单节点配置
+#指定eurka的名字单节点配置
 #指定eurka的名字
-#spring:
-#  application:
-#    name: ad-eureka
-#
-##指定Eureka的端口
-#server:
-#  port: 8000
-#
-##注册eureka配置
-#eureka:
-#  instance:
-#    hostname: localhost
-#  client:
-#    #是否从eureka获取注册信息
-#    fetch-registry: false
-#    #是否将自己注册进eureka
-#    register-with-eureka: false
-#    #设置eureka的serve的地址
-#    service-url:
-#      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
+spring:
+  application:
+    name: ad-eureka
+
+#指定Eureka的端口
+server:
+  port: 8000
+
+#注册eureka配置
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    #是否从eureka获取注册信息
+    fetch-registry: false
+    #是否将自己注册进eureka
+    register-with-eureka: false
+    #设置eureka的serve的地址
+    service-url:
+      defaultZone: http://${eureka.instance.hostname}:${server.port}/eureka/
 
 
 #多节点配置 实现高可用
----
-spring:
-  application:
-    name: ad-eureka
-  profiles: server1
-server:
-  port: 8000
-eureka:
-  instance:
-    hostname: server1
-    prefer-ip-address: false
-  client:
-    service-url:
-      defaultZone: http://server2:8001/eureka/,http://server3:8002/eureka/
-
-
----
-spring:
-  application:
-    name: ad-eureka
-  profiles: server2
-server:
-  port: 8001
-eureka:
-  instance:
-    hostname: server2
-    prefer-ip-address: false
-  client:
-    service-url:
-      defaultZone: http://server1:8000/eureka/,http://server3:8002/eureka/
-
-
----
-spring:
-  application:
-    name: ad-eureka
-  profiles: server3
-server:
-  port: 8002
-eureka:
-  instance:
-    hostname: server3
-    prefer-ip-address: false
-  client:
-    service-url:
-      defaultZone: http://server1:8000/eureka/,http://server2:8001/eureka/
+#---
+#spring:
+#  application:
+#    name: ad-eureka
+#  profiles: server1
+#server:
+#  port: 8000
+#eureka:
+#  instance:
+#    hostname: server1
+#    prefer-ip-address: false
+#  client:
+#    service-url:
+#      defaultZone: http://server2:8001/eureka/,http://server3:8002/eureka/
+#
+#
+#---
+#spring:
+#  application:
+#    name: ad-eureka
+#  profiles: server2
+#server:
+#  port: 8001
+#eureka:
+#  instance:
+#    hostname: server2
+#    prefer-ip-address: false
+#  client:
+#    service-url:
+#      defaultZone: http://server1:8000/eureka/,http://server3:8002/eureka/
+#
+#
+#---
+#spring:
+#  application:
+#    name: ad-eureka
+#  profiles: server3
+#server:
+#  port: 8002
+#eureka:
+#  instance:
+#    hostname: server3
+#    prefer-ip-address: false
+#  client:
+#    service-url:
+#      defaultZone: http://server1:8000/eureka/,http://server2:8001/eureka/
