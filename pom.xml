@@ -29,7 +29,6 @@
     <properties>
 <!--        自定义的，名字是随便起的，spring-cloud
                 也可以指定jdk的版本
-
 -->
         <spring-cloud.version>Finchley.RELEASE</spring-cloud.version>
     </properties>
