@@ -1,0 +1,32 @@
+server:
+  port: 8000
+
+spring:
+  .application:
+    name: ad-eureka-security
+    #添加Http basic认证
+  security:
+    user:
+      name: admin
+      password: admin123
+
+#直接开启和暴露所有端点
+management:
+  endpoints:
+    web:
+      exposure:
+        exclude:
+          include: refresh
+
+eureka:
+  instance:
+    hostname: localhost
+  client:
+    fetch-registry: false
+    register-with-eureka: false
+    service-url:
+      defaultZone: http://admin:admin123@server1:8000/eureka/
+
+
+
+
