@@ -1,0 +1,14 @@
+#指定网关端口
+server:
+  port: 9000
+
+#给服务命名
+spring:
+  application:
+    name: ad-gateway
+
+#把服务注册eureka中
+eureka:
+  client:
+    service-url:
+      defaultZone: http://server1:8000/eureka/
