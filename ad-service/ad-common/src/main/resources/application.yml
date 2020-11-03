@@ -1,0 +1,29 @@
+spring:
+  .profiles:
+    active: dev
+
+adconf:
+  mysql:
+    host: 127.0.0.1
+    port: 3306
+    username: root
+    password: admin123
+
+
+---
+spring:
+  profiles: dev
+
+server:
+  port: 8080
+
+---
+spring:
+  profiles: prod
+server:
+  port: 8081
+---
+spring:
+  profiles: test
+server:
+  port: 8082

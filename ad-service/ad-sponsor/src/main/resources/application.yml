@@ -1,0 +1,36 @@
+server:
+  port: 7000
+  servlet:
+    context-path: /ad-sponsor
+
+spring:
+  application:
+    name: ad-sponsor
+  jpa:
+    #是否展示sql语句
+    show-sql: true
+    #是否创建新的表结构
+    hibernate:
+      ddl-auto: none
+    properties:
+      #是否格式化sql 防止乱码
+      hibernate.format_sql: true
+     #懒加载会导致找不到bean报错
+    open-in-view: false
+  datasource:
+    url: jdbc:mysql://127.0.0.1:3306/ad_data?autoReconnect=true
+    username: root
+    password: admin123
+    #配置tomcat的数据连接池
+    tomcat:
+      #最大使用几个连接
+      max-active: 10
+      #空闲最先使用几个连接
+      min-idle: 5
+      #默认初始化几个连接
+      initial-size: 2
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://server1:8000/eureka/
