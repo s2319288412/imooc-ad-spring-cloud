@@ -1,6 +1,5 @@
 package com.imooc.ad.service;
 
-import com.imooc.ad.dao.AdPlanRepository;
 import com.imooc.ad.entity.AdPlan;
 import com.imooc.ad.exception.AdException;
 import com.imooc.ad.vo.AdPlanGetRequest;
@@ -24,7 +23,7 @@ public interface IAdPlanService {
      * @Param
      * @return
      **/
-    AdPlanRepository createAdPlan(AdPlanRequest request) throws AdException;
+    AdPlanResponse createAdPlan(AdPlanRequest request) throws AdException;
     /**
      * @Author qsong
      * @Description 获取推广计划

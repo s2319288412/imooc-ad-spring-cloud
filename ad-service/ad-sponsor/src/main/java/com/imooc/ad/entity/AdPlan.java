@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.util.Date;
@@ -22,6 +23,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Entity
 @Table(name = "ad_plan")
+@Accessors(chain = true)
 public class AdPlan {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
