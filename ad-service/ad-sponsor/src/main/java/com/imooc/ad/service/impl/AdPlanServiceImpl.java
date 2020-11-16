@@ -13,6 +13,7 @@ import com.imooc.ad.vo.AdPlanGetRequest;
 import com.imooc.ad.vo.AdPlanRequest;
 import com.imooc.ad.vo.AdPlanResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
@@ -36,6 +37,7 @@ public class AdPlanServiceImpl implements IAdPlanService {
 
     private final AdPlanRepository planRepository;
 
+    @Autowired
     public AdPlanServiceImpl(AdUserRepository userRepository, AdPlanRepository planRepository) {
         this.userRepository = userRepository;
         this.planRepository = planRepository;
