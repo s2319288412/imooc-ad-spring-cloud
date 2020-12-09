@@ -8,9 +8,16 @@ import com.best.javaSdk.kdWaybillApplyNotify.request.Auth;
 import com.best.javaSdk.kdWaybillApplyNotify.request.EDIPrintDetailList;
 import com.best.javaSdk.kdWaybillApplyNotify.request.KdWaybillApplyNotifyReq;
 import com.best.javaSdk.kdWaybillApplyNotify.response.KdWaybillApplyNotifyRsp;
+import com.google.zxing.BarcodeFormat;
+import com.google.zxing.WriterException;
+import com.google.zxing.client.j2se.MatrixToImageWriter;
+import com.google.zxing.common.BitMatrix;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.imooc.ad.sto.StoResponse;
 import com.imooc.ad.sto.request.*;
+import com.imooc.ad.sto.response.StoTraceQueryResponse;
 import com.imooc.ad.utils.FileUtil;
+import com.imooc.ad.utils.MD5Util;
 import com.imooc.ad.utils.ZipUtils;
 import com.imooc.ad.yunda.request.*;
 import com.sto.link.request.LinkRequest;
@@ -23,6 +30,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.FileSystems;
+import java.nio.file.Path;
 import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
@@ -48,6 +57,13 @@ public class MathTest {
      * 下单服务接口(测试环境)
      */
     private static final String NEW_ORDER_URL = "https://devkyweixin.yundasys.com/openapi-api/v1/accountOrder/createBmOrder";
+
+    //日
+    private static final long day = 1000 * 24 * 60 * 60;
+    //时
+    private static final long hour= 1000 * 60 * 60;
+    //分
+    private static final long minute = 1000 * 60;
 
     @Test
     public void managerTest(){
@@ -275,15 +291,15 @@ public class MathTest {
         String content = JSONObject.toJSONString(stoOrderModel);
 //        String content="{\"orderNo\":\"8885452262\",\"orderSource\":\"VIPEO\",\"billType\":\"01\",\"orderType\":\"01\",\"sender\":{\"name\":\"测试名称\",\"tel\":\"18775487548\",\"mobile\":\"0558-45778586\",\"postCode\":\"100001\",\"country\":\"中国\",\"province\":\"安徽\",\"city\":\"合肥\",\"area\":\"泸州\",\"town\":\"测试镇\",\"address\":\"XX街道XX小区XX楼888\"},\"receiver\":{\"name\":\"测试名称\",\"tel\":\"15575487548\",\"mobile\":\"0556-45778586\",\"postCode\":\"100001\",\"country\":\"中国\",\"province\":\"河北\",\"city\":\"湖州\",\"area\":\"江汉\",\"town\":\"收件镇\",\"address\":\"XX街道XX小区XX楼666\"},\"cargo\":{\"battery\":\"10\",\"goodsType\":\"大件\",\"goodsName\":\"XX物\",\"goodsCount\":10,\"spaceX\":10,\"spaceY\":10,\"spaceZ\":10,\"weight\":10,\"goodsAmount\":\"100\",\"cargoItemList\":[{\"CargoItemDO\":{\"serialNumber\":\"8451234\",\"referenceNumber\":\"88838783634\",\"productId\":\"001\",\"name\":\"小商品\",\"qty\":10,\"unitPrice\":1,\"amount\":10,\"currency\":\"美元\",\"weight\":10,\"remark\":\"无备注\"}}]},\"customer\":{\"siteCode\":\"900000\",\"customerName\":\"900000000004\",\"sitePwd\":\"abc123\"},\"insuredAnnex\":{\"insuredValue\":\"100\",\"goodsValue\":\"2000\"},\"codValue\":\"2000\",\"freightCollectValue\":\"20\",\"timelessType\":\"01\",\"productType\":\"01\",\"serviceTypeList\":[{\"listItem\":\"DELIVER_CONTACT\"}, {\"listItem\":\"TRACE_PUSH\"}],\"remark\":\"无备注\",\"createChannel\":\"01\"}";
         LinkRequest data = new LinkRequest();
-        data.setFromAppkey("sto_test");
-        data.setFromCode("sto_test_code");
+        data.setFromAppkey("CAKcBiMhfuSLeXN");
+        data.setFromCode("CAKcBiMhfuSLeXN");
         data.setToAppkey("sto_oms");
         data.setToCode("sto_oms");
         data.setApiName("OMS_EXPRESS_ORDER_CREATE");
         data.setContent(content);
 //        data.setContent("{\"orderNo\":\"8885452262\",\"orderSource\":\"VIPEO\",\"billType\":\"01\",\"orderType\":\"01\",\"sender\":{\"name\":\"测试名称\",\"tel\":\"18775487548\",\"mobile\":\"0558-45778586\",\"postCode\":\"100001\",\"country\":\"中国\",\"province\":\"安徽\",\"city\":\"合肥\",\"area\":\"泸州\",\"town\":\"测试镇\",\"address\":\"XX街道XX小区XX楼888\"},\"receiver\":{\"name\":\"测试名称\",\"tel\":\"15575487548\",\"mobile\":\"0556-45778586\",\"postCode\":\"100001\",\"country\":\"中国\",\"province\":\"河北\",\"city\":\"湖州\",\"area\":\"江汉\",\"town\":\"收件镇\",\"address\":\"XX街道XX小区XX楼666\"},\"cargo\":{\"battery\":\"10\",\"goodsType\":\"大件\",\"goodsName\":\"XX物\",\"goodsCount\":10,\"spaceX\":10,\"spaceY\":10,\"spaceZ\":10,\"weight\":10,\"goodsAmount\":\"100\",\"cargoItemList\":[{\"CargoItemDO\":{\"serialNumber\":\"8451234\",\"referenceNumber\":\"88838783634\",\"productId\":\"001\",\"name\":\"小商品\",\"qty\":10,\"unitPrice\":1,\"amount\":10,\"currency\":\"美元\",\"weight\":10,\"remark\":\"无备注\"}}]},\"customer\":{\"siteCode\":\"900000\",\"customerName\":\"900000000004\",\"sitePwd\":\"abc123\"},\"insuredAnnex\":{\"insuredValue\":\"100\",\"goodsValue\":\"2000\"},\"codValue\":\"2000\",\"freightCollectValue\":\"20\",\"timelessType\":\"01\",\"productType\":\"01\",\"serviceTypeList\":[{\"listItem\":\"DELIVER_CONTACT\"}, {\"listItem\":\"TRACE_PUSH\"}],\"remark\":\"无备注\",\"createChannel\":\"01\"}");
         String url = "http://cloudinter-linkgatewaytest.sto.cn/gateway/link.do";
-        String secretKey = "123abc";
+        String secretKey = "1sbjJiNSXjlydjIJmolw0pwTNK7q36hG";
         String request = request(data, url, secretKey);
         StoResponse stoResponse = JSON.parseObject(request, StoResponse.class);
 
@@ -294,24 +310,32 @@ public class MathTest {
 //    申通物流查询
     @Test
     public void stoTraceQueryCommon(){
-        String waybillNo="773031309794393";
+        String waybillNo="6606002284014";
         List<String> waybillNoList=new ArrayList<>();
         waybillNoList.add(waybillNo);
-        String content = JSON.toJSONString(waybillNoList);
+//        String content = JSON.toJSONString(waybillNoList);
+        StoTraceQueryRequest stoTraceQueryRequest=new StoTraceQueryRequest();
+        stoTraceQueryRequest.setOrder("asc");
+        stoTraceQueryRequest.setWaybillNoList(waybillNoList);
+        String content = JSONObject.toJSONString(stoTraceQueryRequest);
+
 
         LinkRequest data = new LinkRequest();
-        data.setFromAppkey("sto_test");
-        data.setFromCode("sto_test_code");
+        data.setFromAppkey("CAKcBiMhfuSLeXN");
+        data.setFromCode("CAKcBiMhfuSLeXN");
         data.setToAppkey("sto_trace_query");
         data.setToCode("sto_trace_query");
         data.setApiName("STO_TRACE_QUERY_COMMON");
         data.setContent(content);
 //        data.setContent("{\"orderNo\":\"8885452262\",\"orderSource\":\"VIPEO\",\"billType\":\"01\",\"orderType\":\"01\",\"sender\":{\"name\":\"测试名称\",\"tel\":\"18775487548\",\"mobile\":\"0558-45778586\",\"postCode\":\"100001\",\"country\":\"中国\",\"province\":\"安徽\",\"city\":\"合肥\",\"area\":\"泸州\",\"town\":\"测试镇\",\"address\":\"XX街道XX小区XX楼888\"},\"receiver\":{\"name\":\"测试名称\",\"tel\":\"15575487548\",\"mobile\":\"0556-45778586\",\"postCode\":\"100001\",\"country\":\"中国\",\"province\":\"河北\",\"city\":\"湖州\",\"area\":\"江汉\",\"town\":\"收件镇\",\"address\":\"XX街道XX小区XX楼666\"},\"cargo\":{\"battery\":\"10\",\"goodsType\":\"大件\",\"goodsName\":\"XX物\",\"goodsCount\":10,\"spaceX\":10,\"spaceY\":10,\"spaceZ\":10,\"weight\":10,\"goodsAmount\":\"100\",\"cargoItemList\":[{\"CargoItemDO\":{\"serialNumber\":\"8451234\",\"referenceNumber\":\"88838783634\",\"productId\":\"001\",\"name\":\"小商品\",\"qty\":10,\"unitPrice\":1,\"amount\":10,\"currency\":\"美元\",\"weight\":10,\"remark\":\"无备注\"}}]},\"customer\":{\"siteCode\":\"900000\",\"customerName\":\"900000000004\",\"sitePwd\":\"abc123\"},\"insuredAnnex\":{\"insuredValue\":\"100\",\"goodsValue\":\"2000\"},\"codValue\":\"2000\",\"freightCollectValue\":\"20\",\"timelessType\":\"01\",\"productType\":\"01\",\"serviceTypeList\":[{\"listItem\":\"DELIVER_CONTACT\"}, {\"listItem\":\"TRACE_PUSH\"}],\"remark\":\"无备注\",\"createChannel\":\"01\"}");
         String url = "http://cloudinter-linkgatewaytest.sto.cn/gateway/link.do";
-        String secretKey = "123abc";
+        String secretKey = "1sbjJiNSXjlydjIJmolw0pwTNK7q36hG";
         String request = request(data, url, secretKey);
-        System.out.println(request);
+        StoTraceQueryResponse stoTraceQueryResponse = JSON.parseObject(request, StoTraceQueryResponse.class);
+        System.out.println(stoTraceQueryResponse.toString());
     }
+
+
     //百世下单
     @Test
     public void kdApiTest(){
@@ -331,25 +355,27 @@ public class MathTest {
         List<EDIPrintDetailList> lists = new ArrayList<>();
 
         EDIPrintDetailList ediPrintDetailList = new EDIPrintDetailList();
-        ediPrintDetailList.setSendMan("张三");
-        ediPrintDetailList.setSendManPhone("88888888");
-        ediPrintDetailList.setSendManAddress("教工路一号");
-        ediPrintDetailList.setSendPostcode("400000");
-        ediPrintDetailList.setSendProvince("浙江省");
-        ediPrintDetailList.setSendCity("杭州市");
-        ediPrintDetailList.setSendCounty("西湖区");
-        ediPrintDetailList.setReceiveMan("李四");
-        ediPrintDetailList.setReceiveManPhone("99999999");
-        ediPrintDetailList.setReceiveManAddress("文三路一号");
-        ediPrintDetailList.setReceivePostcode("400000");
-        ediPrintDetailList.setReceiveProvince("浙江省");
-        ediPrintDetailList.setReceiveCity("杭州市");
-        ediPrintDetailList.setReceiveCounty("西湖区");
-        ediPrintDetailList.setItemCount(1);
-        ediPrintDetailList.setItemName("书");
-        ediPrintDetailList.setItemWeight(10.0);
-        ediPrintDetailList.setRemark("remark");
-        lists.add(ediPrintDetailList);
+
+
+//        ediPrintDetailList.setSendMan("张三");
+//        ediPrintDetailList.setSendManPhone("88888888");
+//        ediPrintDetailList.setSendManAddress("教工路一号");
+//        ediPrintDetailList.setSendPostcode("400000");
+//        ediPrintDetailList.setSendProvince("浙江省");
+//        ediPrintDetailList.setSendCity("杭州市");
+//        ediPrintDetailList.setSendCounty("西湖区");
+//        ediPrintDetailList.setReceiveMan("李四");
+//        ediPrintDetailList.setReceiveManPhone("99999999");
+//        ediPrintDetailList.setReceiveManAddress("文三路一号");
+//        ediPrintDetailList.setReceivePostcode("400000");
+//        ediPrintDetailList.setReceiveProvince("浙江省");
+//        ediPrintDetailList.setReceiveCity("杭州市");
+//        ediPrintDetailList.setReceiveCounty("西湖区");
+//        ediPrintDetailList.setItemCount(1);
+//        ediPrintDetailList.setItemName("书");
+//        ediPrintDetailList.setItemWeight(10.0);
+//        ediPrintDetailList.setRemark("remark");
+//        lists.add(ediPrintDetailList);
         billPrintRequestReq.setEDIPrintDetailList(lists);
 
         //billPrintRequestRsp即为百世的响应
@@ -379,5 +405,88 @@ public class MathTest {
         System.out.println(kdTraceQueryRsp);
     }
 
+    /**
+     * md5加密
+     */
+    @Test
+    public void md5Test(){
+        String str = MD5Util.encrypt("admin" + 123456);
+        //a66abb5684c45962d887564f08346e8d
+        System.out.println(str);
+        String str2 = MD5Util.encrypt("admin" + 123456);
+        System.out.println(str2);
+    }
+
+    @Test
+    public void strTest(){
+        String str="数据备份222222222222221555";
+        String str2 = str.replace("数据备份", "");
+        System.out.println(str2);
+    }
+
+
+
+    /**
+     * @Author qsong
+     * @Description 时间计算
+     * @Date 下午4:32 2020/12/7
+     * @Param
+     * @return
+     **/
+    @Test
+    public void test3() {
+        try {
+            SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            Date now = df.parse("2019-03-26 13:31:40");//当前时间
+            Date date = df.parse("2019-03-26 13:30:41");//过去
+            long l = now.getTime() - date.getTime();
+            long day = l / (24 * 60 * 60 * 1000);
+            long hour = (l / (60 * 60 * 1000) - day * 24);
+            long min = ((l / (60 * 1000)) - day * 24 * 60 - hour * 60);
+            long s = (l / 1000 - day * 24 * 60 * 60 - hour * 60 * 60 - min * 60);
+            System.out.println("" + min + "分" + s + "秒");
+        } catch (Exception e) {
+
+        }
+
+    }
+
+    /**
+     * @Author qsong
+     * @Description 二维码生成
+     * @Date 下午4:57 2020/12/9
+     * @Param
+     * @return
+     **/
+    private static final String QR_CODE_IMAGE_PATH = "/Users/administrator/Desktop/MyQRCode.png";
+    private static void generateQRCodeImage(String text, int width, int height, String filePath) throws WriterException, IOException {
+        QRCodeWriter qrCodeWriter = new QRCodeWriter();
+
+        BitMatrix bitMatrix = qrCodeWriter.encode(text, BarcodeFormat.QR_CODE, width, height);
+
+        Path path = FileSystems.getDefault().getPath(filePath);
+
+        MatrixToImageWriter.writeToPath(bitMatrix, "PNG", path);
+
+    }
+    /**
+     * @Author qsong
+     * @Description 生成二维码
+     * @Date 下午5:00 2020/12/9
+     * @Param
+     * @return
+     **/
+    @Test
+    public void QRCodeGeneratorTest(){
+        try {
+            generateQRCodeImage("www.xiaobustudy.cn", 350, 350, QR_CODE_IMAGE_PATH);
+        } catch (WriterException e) {
+            System.out.println("Could not generate QR Code, WriterException :: " + e.getMessage());
+        } catch (IOException e) {
+            System.out.println("Could not generate QR Code, IOException :: " + e.getMessage());
+        }
+    }
 
 }
+
+
