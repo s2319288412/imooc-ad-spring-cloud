@@ -20,13 +20,16 @@ import com.imooc.ad.utils.FileUtil;
 import com.imooc.ad.utils.MD5Util;
 import com.imooc.ad.utils.ZipUtils;
 import com.imooc.ad.yunda.request.*;
+import com.imooc.ad.yunda.response.ResponseResult;
 import com.sto.link.request.LinkRequest;
 import com.yundasys.api.DefaultOpenapiClient;
 import com.yundasys.api.OpenapiConstants;
-import com.yundasys.api.request.OpenApiDefaultRequest;
-import com.yundasys.api.response.OpenApiDefaultResponse;
-import org.junit.Test;
+import com.yundasys.api.OpenapiException;
+import com.yundasys.api.internal.util.WebUtils;
+import com.yundasys.api.request.OpenApiDefaultRequest;import org.junit.Test;
 import org.springframework.boot.test.context.SpringBootTest;
+import sun.misc.BASE64Decoder;
+import sun.misc.BASE64Encoder;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,6 +39,7 @@ import java.security.MessageDigest;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.List;
 
@@ -138,10 +142,6 @@ public class MathTest {
 
     @Test
     public void yundaTest() throws Exception {
-//        String appSecret="04d4ad40eeec11e9bad2d962f53dda9d";
-//        String params="jsonReqBody_"+appSecret;
-//        String md5 = MD5(params);
-//        System.out.println(md5);
         String appKey="999999";
         //创建应用分配的appsecret
         //签名
@@ -225,7 +225,7 @@ public class MathTest {
         //生成的SIGN签名串
         String sign = defaultOpenapiClient.getSigner().sign(sourceContent, OpenapiConstants.SIGN_TYPE_MD5, OpenapiConstants.CHARSET_UTF8);
         openApiDefaultRequest.setHeadersMap(appKey, sign, String.valueOf(System.currentTimeMillis()));
-        OpenApiDefaultResponse openApiDefaultResponse = defaultOpenapiClient.excute(openApiDefaultRequest);
+        ResponseResult openApiDefaultResponse = this.excute(openApiDefaultRequest);
         System.out.println(openApiDefaultResponse.toString());
         System.out.println(openApiDefaultResponse.getData());
 //        System.out.println(openApiDefaultResponse.getData());
@@ -233,19 +233,19 @@ public class MathTest {
 //        System.out.println(str);
 //        String str2 = openApiDefaultResponse.getData().replaceAll("=", ":");
 //        System.out.println(str2);
-        System.out.println(System.currentTimeMillis());
+
 //        JSONObject jsonObject = JSONObject.parseObject(str2);
 //        List<ResponseData> responseData = JSON.parseArray(openApiDefaultResponse.getData(), ResponseData.class);
 //        System.out.println(responseData1.toString());
 //        char[] chars = openApiDefaultResponse.getData().toCharArray();
 
-        System.out.println();
-
-        if(openApiDefaultResponse.isSuccess()){
-            System.out.println("调用成功");
-        }else{
-            System.out.println("调用失败");
-        }
+//        System.out.println();
+//
+//        if(openApiDefaultResponse.isSuccess()){
+//            System.out.println("调用成功");
+//        }else{
+//            System.out.println("调用失败");
+//        }
 //        String responseData= openApiDefaultResponse.getData();
 //        ResponseData responseData1 = JSON.parseObject(responseData, ResponseData.class);
 ////        ResponseData responseData = JSONObject.toJavaObject(jsonObject, ResponseData.class);
@@ -253,6 +253,21 @@ public class MathTest {
 //        System.out.println(openApiDefaultResponse.toString());
 
     }
+    private int connectTimeout = 3000;
+    private int readTimeout = 15000;
+    public ResponseResult  excute(OpenApiDefaultRequest request) throws OpenapiException {
+        ResponseResult tRsp = null;
+        System.out.println("--------------------------------------------");
+        try {
+            String httpResult = WebUtils.doPost(this.NEW_ORDER_URL, request.getHttpRequestBody(), request.getHttpRequestHeaders(), this.connectTimeout, this.readTimeout);
+            ResponseResult responseResult = JSON.parseObject(httpResult, ResponseResult.class);
+            return  responseResult;
+        } catch (IOException var5) {
+            throw new OpenapiException(var5);
+        }
+    }
+
+
 
 
     private String MD5(String data) throws Exception {
@@ -485,8 +500,66 @@ public class MathTest {
         } catch (IOException e) {
             System.out.println("Could not generate QR Code, IOException :: " + e.getMessage());
         }
+        System.out.println("二维码生成成功");
     }
 
+    /**
+     * @Author qsong
+     * @Description base加密解密
+     *  早期在Java上做Base64的编码与解码，会使用到JDK里sun.misc套件下的BASE64Encoder和BASE64Decoder这两个类别，用法如下：
+     * @Date 上午9:09 2020/12/17
+     * @Param
+     * @return
+     **/
+    @Test
+    public void Base64EnCodeAndDeCodeJdk() throws IOException {
+        final BASE64Encoder encoder = new BASE64Encoder();
+        final String text = "字串文字";
+        final byte[] textByte = text.getBytes("UTF-8");
+        //编码
+        final String encodedText = encoder.encode(textByte);
+        System.out.println(encodedText);
+        final BASE64Decoder decoder = new BASE64Decoder();
+        //解码
+        System.out.println(new String(decoder.decodeBuffer(encodedText), "UTF-8"));
+    }
+    /**
+     * @Author qsong
+     * @Description Apache Commons Codec有提供Base64的编码与解码功能，会使用到org.apache.commons.codec.binary套件下的Base64类别，用法如下：
+     * @Date 上午9:13 2020/12/17
+     * @Param
+     * @return
+     **/
+    @Test
+    public void Base64EnCodeAndDeCodeApache() throws IOException {
+//        final Base64 base64 = new Base64();
+//        final String text = "字串12文字ee";
+//        final byte[] textByte = text.getBytes("UTF-8");
+//        //编码
+//        final String encodedText = base64.encodeToString(textByte);
+//        System.out.println(encodedText);
+//        //解码
+//        System.out.println(new String(base64.decode(encodedText), "UTF-8"));
+    }
+    /**
+     * @Author qsong
+     * @Description Java 8的java.util套件中，新增了Base64的类别，可以用来处理Base64的编码与解码，用法如下：
+     * @Date 上午9:15 2020/12/17
+     * @Param
+     * @return
+     **/
+    @Test
+    public void Base64EnCodeAndDeCode() throws IOException {
+        final Base64.Decoder decoder = Base64.getDecoder();
+        final Base64.Encoder encoder = Base64.getEncoder();
+        final String text = "字串文weesxs字11111";
+        final byte[] textByte = text.getBytes("UTF-8");
+        //编码
+        final String encodedText = encoder.encodeToString(textByte);
+        System.out.println(encodedText);
+        //解码
+        System.out.println(new String(decoder.decode(encodedText), "UTF-8"));
+    }
 }
 
 

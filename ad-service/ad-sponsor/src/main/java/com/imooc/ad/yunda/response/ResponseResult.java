@@ -10,7 +10,7 @@ import lombok.Data;
  * @Version 1.0
  **/
 @Data
-public class ResponseResult  {
+public class ResponseResult {
 
     /**
      * 是否成功
@@ -27,6 +27,6 @@ public class ResponseResult  {
     /**
      * 返回对象
      */
-    private Object data;
+    private ResponseData data;
 
 }
